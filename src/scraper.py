@@ -1,5 +1,7 @@
 from playwright.sync_api import sync_playwright
 import time
+import os
+import pathlib
 
 PROFILE_URL = "https://myriad.markets/profile/0x2993249A3D107B759c886a4BD4e02B70d471eA9B?tab=activity"
 
@@ -53,6 +55,18 @@ def scrape_activity():
             
             # Extract content using text parsing (more robust than selectors for this structure)
             page_text = page.locator("body").inner_text()
+            
+            # --- Dump Page Text for Debugging ---
+            try:
+                BASE_DIR = pathlib.Path(__file__).parent.parent
+                DUMP_FILE = BASE_DIR / 'output' / 'page_dump.txt'
+                with open(DUMP_FILE, "w", encoding="utf-8") as f:
+                    f.write(page_text)
+                print(f"Saved page content to {DUMP_FILE}")
+            except Exception as e:
+                print(f"Failed to save page dump: {e}")
+            # ------------------------------------
+
             lines = [line.strip() for line in page_text.split('\n') if line.strip()]
             
             print(f"Extracted {len(lines)} lines of text from page.")

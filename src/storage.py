@@ -2,8 +2,10 @@ import pandas as pd
 import hashlib
 import os
 from datetime import datetime
+import pathlib
 
-CSV_FILE = "activity_log.csv"
+BASE_DIR = pathlib.Path(__file__).parent.parent
+CSV_FILE = BASE_DIR / 'output' / 'activity_log.csv'
 
 def generate_activity_id(activity):
     """Generates a unique ID for an activity based on its content."""
@@ -12,7 +14,7 @@ def generate_activity_id(activity):
     return hashlib.md5(unique_string.encode('utf-8')).hexdigest()
 
 def load_existing_activities():
-    if not os.path.exists(CSV_FILE):
+    if not CSV_FILE.exists():
         return set()
     try:
         df = pd.read_csv(CSV_FILE)
@@ -51,4 +53,4 @@ def save_new_activities(activities):
     else:
         print("No new activities found.")
     
-    return len(new_items)
+    return new_items
